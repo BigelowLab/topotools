@@ -1,0 +1,15 @@
+Package: etopotools
+Title: etopotools
+Description: Convenience tools for ETOPO data stored locally
+Version: 0.1
+Encoding: UTF-8
+Depends:
+    R (>= 3.5)
+Imports:
+  raster
+Maintainer: Ben Tupper <btupper@bigelow.org>
+Author: Ben Tupper <btupper@bigelow.org>
+URL: https://github.com/BigelowLab/etopotools
+License: GPL-3
+LazyData: true
+RoxygenNote: 7.1.0
