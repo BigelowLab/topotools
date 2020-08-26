@@ -1,6 +1,6 @@
 Package: etopotools
 Title: etopotools
-Description: Convenience tools for ETOPO data stored locally
+Description: Convenience tools for ETOPO data stored locally.
 Version: 0.1
 Encoding: UTF-8
 Depends:

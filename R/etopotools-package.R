@@ -49,7 +49,7 @@ read_etopo <- function(filename = c("ETOPO1_Ice_c_geotiff.tif",
 #' \itemize{
 #' \item{above, values at or above \code{value} are assigned NA, all others assigned 1 - this masks area at or above sealevel}
 #' \item{at, values at \code{value} are assigned NA, above +1 and below -1}
-#' \ietm{below, values at or below \code{value} are assigned NA, all others assigned 1 - this masks area at or below sealevel}
+#' \item{below, values at or below \code{value} are assigned NA, all others assigned 1 - this masks area at or below sealevel}
 #' }
 mask_etopo <- function(x = read_etopo(),
                        value = 0,

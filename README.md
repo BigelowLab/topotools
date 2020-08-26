@@ -21,6 +21,10 @@ devtools::install_github("BigelowLab/etopotools")
 
 ## Usage
 
+```
+library(etopotools)
+```
+
 ### Paths
 
 ```
@@ -85,6 +89,7 @@ gom_mask  <- read_etopo("ETOPO1_Ice_c_mask.tif", path = etopo_path("regions", "g
 nwa <- read_etopo(path = etopo_path("regions", "nwa"))
 nwa_mask  <- read_etopo("ETOPO1_Ice_c_mask.tif", path = etopo_path("regions", "nwa"))
 
+library(raster)  # to expose plot.RasterLayer()
 par(mfrow = c(2,1))
 plot(gom * gom_mask)
 plot(nwa * nwa_mask)
