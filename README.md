@@ -1,97 +1,151 @@
-# [etopotools](https://github.com/BigelowLab/etopotools)
+topotools
+================
 
-Coding tools for working with local copies of [ETOPO data](https://ngdc.noaa.gov/mgg/global/).
+Coding tools for working with local copies of [ETOPO
+data](https://ngdc.noaa.gov/mgg/global/) and [GEBCO
+data](https://www.gebco.net).
 
-## Citation [doi:10.7289/V5C8276M](http://dx.doi.org/10.7289/V5C8276M)
-```
-Amante, C. and B.W. Eakins, 2009. ETOPO1 1 Arc-Minute Global Relief Model:
-Procedures, Data Sources and Analysis. NOAA Technical Memorandum NESDIS NGDC-24.
-National Geophysical Data Center, NOAA. doi:10.7289/V5C8276M [2018-11-01].
-```
+### ETOPO Citation
+
+    Amante, C. and B.W. Eakins, 2009. ETOPO1 1 Arc-Minute Global Relief Model:
+    Procedures, Data Sources and Analysis. NOAA Technical Memorandum NESDIS NGDC-24.
+    National Geophysical Data Center, NOAA. doi:10.7289/V5C8276M [2018-11-01].
+
+### GEBCO Citation
+
+    GEBCO Compilation Group (2020) GEBCO 2020 Grid (doi:10.5285/c6612cbe-50b3-0cff-e053-6c86abc09f8f).
 
 ## Requirements
 
-+ [raster](https://CRAN.R-project.org/package=raster)
+-   [terra](https://CRAN.R-project.org/package=terra)
+
+-   [ncdf4](https://CRAN.R-project.org/package=ncdf4)
 
 ## Installation
 
-```
-devtools::install_github("BigelowLab/etopotools")
-```
+    devtools::install_github("BigelowLab/topotools")
 
 ## Usage
 
-```
-library(etopotools)
+``` r
+library(terra)
+library(topotools)
+library(viridisLite)
 ```
 
 ### Paths
 
-```
-library("etopotools")
-dir(etopo_path(), full.names = TRUE)
-```
+The root path to the topography data defaults to that which works for
+our setup. You can easily override this - see the `read_gebco` and
+`read_etopo` functions.
 
-### Bounding Box, Bathymetry and Mask
-
-Read in the entire dataset.
-
-```
-(etopo <- read_etopo())
-# class      : RasterLayer 
-# dimensions : 10800, 21600, 233280000  (nrow, ncol, ncell)
-# resolution : 0.01666667, 0.01666667  (x, y)
-# extent     : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
-# crs        : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-# source     : /mnt/ecocast/coredata/bathy/ETOPO1/ETOPO1_Ice_c_geotiff.tif 
-# names      : ETOPO1_Ice_c_geotiff 
-# values     : -32768, 32767  (min, max)
+``` r
+library("topotools")
+dir(topo_path(), full.names = TRUE)
 ```
 
-Or read in a subset
-```
-bb <- c(west = -77, east = -42.5, south = 36.5, north = 56.7)
-(etopo <- read_etopo(bb = bb))
-# class      : RasterLayer 
-# dimensions : 1212, 2070, 2508840  (nrow, ncol, ncell)
-# resolution : 0.01666667, 0.01666667  (x, y)
-# extent     : -77, -42.5, 36.5, 56.7  (xmin, xmax, ymin, ymax)
-# crs        : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-# source     : memory
-# names      : ETOPO1_Ice_c_geotiff 
-# values     : -6004, 1586  (min, max)
-```
+    ## [1] "/mnt/ecocast/coredata/bathy/ETOPO1" "/mnt/ecocast/coredata/bathy/gebco"
 
-The mask (land = NA, water = 1) was prepared by thresholding the bathymetry.
+### Read in a region
 
-```
-(mask <- mask_etopo(etopo, value = 0, where = "above"))
-# class      : RasterLayer 
-# dimensions : 1212, 2070, 2508840  (nrow, ncol, ncell)
-# resolution : 0.01666667, 0.01666667  (x, y)
-# extent     : -77, -42.5, 36.5, 56.7  (xmin, xmax, ymin, ymax)
-# crs        : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-# source     : memory
-# names      : ETOPO1_Ice_c_geotiff 
-# values     : 1, 1  (min, max)
+While it is possible to read in the entire dataset for each source,
+generally the practice is to read in a portion defined by a bounding box
+specified in `[west, east, south, north]` order.
+
+``` r
+bb <- c( -72,  -63,   39,   46)
+
+etopo <- read_etopo(bb = bb)
+gebco <- read_gebco(bb = bb)
+
+etopo
 ```
 
-Note the min and max values are both 1, but rest assured that there NAs at or above sealevel.
+    ## class       : SpatRaster 
+    ## dimensions  : 422, 543, 1  (nrow, ncol, nlyr)
+    ## resolution  : 0.01666667, 0.01666667  (x, y)
+    ## extent      : -72.025, -62.975, 38.975, 46.00833  (xmin, xmax, ymin, ymax)
+    ## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+    ## source      : memory 
+    ## name        :     z 
+    ## min value   : -5128 
+    ## max value   :  1667
 
-### Precomputed subregions
-
-Precomputed rasters are available for the Gulf of Maine ("gom") and Northwest Atlantic ("nwa").
-
+``` r
+gebco
 ```
-gom <- read_etopo(path = etopo_path("regions", "gom"))
-gom_mask  <- read_etopo("ETOPO1_Ice_c_mask.tif", path = etopo_path("regions", "gom"))
 
-nwa <- read_etopo(path = etopo_path("regions", "nwa"))
-nwa_mask  <- read_etopo("ETOPO1_Ice_c_mask.tif", path = etopo_path("regions", "nwa"))
+    ## class       : SpatRaster 
+    ## dimensions  : 1682, 2162, 1  (nrow, ncol, nlyr)
+    ## resolution  : 0.004166667, 0.004166667  (x, y)
+    ## extent      : -72.00417, -62.99583, 38.99583, 46.00417  (xmin, xmax, ymin, ymax)
+    ## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+    ## source      : memory 
+    ## name        : elevation 
+    ## min value   :     -5040 
+    ## max value   :      1861
 
-library(raster)  # to expose plot.RasterLayer()
-par(mfrow = c(2,1))
-plot(gom * gom_mask)
-plot(nwa * nwa_mask)
+Note that the GEBCO data provides approximately 4x the resolution of the
+ETOPO1 data.
+
+For display purposes, it is helpful to clip each raster into a small
+range of values.
+
+``` r
+par(mfrow = c(1,2))
+plot(etopo, 
+     col = viridisLite::viridis(50), 
+     main = "ETOPO1", 
+     range = c(-400, 800), 
+     legend = FALSE)
+plot(gebco, 
+     col = viridisLite::viridis(50), 
+     main = "GEBCO", 
+     range = c(-400, 800), 
+     legend = FALSE)
 ```
-![image](inst/gom_nwa.png)
+
+![](README_files/figure-gfm/plot-1.png)<!-- -->
+
+``` r
+par(mfrow = c(1,1))
+```
+
+### Masking
+
+The `mask_topo` function will work with either data set (well, any
+`terra::SpatRaster` or `raster::RasterLayer` object.) Use that function
+in conjuction with `terra::mask` to produce a masked raster.
+
+``` r
+par(mfrow = c(1,3))
+masked_land <- terra::mask(etopo, topotools::mask_topo(etopo, where = "above"))
+masked_sea <- terra::mask(etopo, topotools::mask_topo(etopo, where = "below"))
+plot(etopo, 
+     col = viridisLite::viridis(50), 
+     main = "ETOPO1", 
+     range = c(-400, 800), 
+     legend = FALSE,
+     axes = FALSE,
+     mar = NA)
+plot(masked_land, 
+     col = viridisLite::viridis(50), 
+     main = "Masked Land ETOPO1", 
+     range = c(-400, 800), 
+     legend = FALSE,
+     axes = FALSE,
+     mar = NA)
+plot(masked_sea, 
+     col = viridisLite::viridis(50), 
+     main = "Masked Ocean ETOPO1", 
+     range = c(-400, 800), 
+     legend = FALSE,
+     axes = FALSE,
+     mar = NA)
+```
+
+![](README_files/figure-gfm/mask-1.png)<!-- -->
+
+``` r
+par(mfrow = c(1,1))
+```

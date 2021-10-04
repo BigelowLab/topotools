@@ -1,15 +1,16 @@
-Package: etopotools
-Title: etopotools
-Description: Convenience tools for ETOPO data stored locally.
+Package: topotools
+Title: topotools
+Description: Convenience tools for ETOPO/GEBCO data stored locally.
 Version: 0.1
 Encoding: UTF-8
 Depends:
-    R (>= 3.5)
+    R (>= 4.0)
 Imports:
-  raster
+  terra,
+  ncdf4
 Maintainer: Ben Tupper <btupper@bigelow.org>
 Author: Ben Tupper <btupper@bigelow.org>
-URL: https://github.com/BigelowLab/etopotools
+URL: https://github.com/BigelowLab/topotools
 License: GPL-3
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2
