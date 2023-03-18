@@ -3,24 +3,27 @@ title: "topotools"
 output: github_document
 ---
 
-Coding tools for working with local copies of [ETOPO data](https://ngdc.noaa.gov/mgg/global/) and [GEBCO data](https://www.gebco.net).
+Coding tools for working with local copies of [ETOPO data](https://www.ncei.noaa.gov/products/etopo-global-relief-model) and [GEBCO data](https://www.gebco.net/data_and_products/gridded_bathymetry_data/#global).
 
 ### ETOPO Citation
 ```
-Amante, C. and B.W. Eakins, 2009. ETOPO1 1 Arc-Minute Global Relief Model:
-Procedures, Data Sources and Analysis. NOAA Technical Memorandum NESDIS NGDC-24.
-National Geophysical Data Center, NOAA. doi:10.7289/V5C8276M [2018-11-01].
+NOAA National Centers for Environmental Information. 2022: ETOPO 2022 15 Arc-Second Global Relief Model. NOAA National Centers for Environmental Information. DOI: 10.25921/fd45-gt74. Accessed 2023-03-17.
 ```
 
 ### GEBCO Citation
-
 ```
-GEBCO Compilation Group (2020) GEBCO 2020 Grid (doi:10.5285/c6612cbe-50b3-0cff-e053-6c86abc09f8f).
+GEBCO Compilation Group (2022) GEBCO_2022 Grid (doi:10.5285/e0f0bb80-ab44-2739-e053-6c86abc0289c) Accessed 2023-03-17.
 ```
 
 ## Requirements
 
 + [terra](https://CRAN.R-project.org/package=terra)
+
++ [stars](https://CRAN.R-project.org/package=stars)
+
++ [sf](https://CRAN.R-project.org/package=sf)
+
++ [dplyr](https://CRAN.R-project.org/package=dplyr)
 
 + [ncdf4](https://CRAN.R-project.org/package=ncdf4)
 
@@ -33,78 +36,71 @@ devtools::install_github("BigelowLab/topotools")
 ## Usage
 
 ```{r load_packages, message = FALSE}
-library(terra)
 library(topotools)
-library(viridisLite)
+library(stars)
 ```
 
 ### Paths
 
-The root path to the topography data defaults to that which works for our setup. You can easily override this - see the `read_gebco` and `read_etopo` functions. 
-``` {r setup}
-library("topotools")
-dir(topo_path(), full.names = TRUE)
+ETOPO and GEBCO datasets are very large.  We suggest that you download them to a directory for bathymetry/topography datasets. Then store the path description to this directory in a hidden text file called `~/.topodata` in your home directory.  We can help with that.  Let's say your path is `/mnt/s1/projects/ecocast/coredata/bathy`.  Then just call the `set_root_path()` function from the `topotools` package like this.
+
 ```
+set_root_path(path = "/mnt/s1/projects/ecocast/coredata/bathy", filename = "~/.topodata")
+```
+
+You don't need to do this each time you use the package; just once before your first use, and, of course, again if you move your data.
+
+### The Data
+
+Within this data directory create two subdirectories: `gebco` and `etopo`. 
+
+Into the `gebco` directory store the "GEBCO_YYYY Grid
+(ice surface elevation)" NetCDF file, where `YYYY` is obviously a 4 digit year.  It may download as a zipped file, but be sure to unzip it. You can find the [GEBCO data here](https://www.gebco.net/data_and_products/gridded_bathymetry_data/#global).
+
+Into the `etopo` directory store either the 30 arc-second or 60 arc-second (or both!) NetCDF file. You can find [ETOPO data here](https://www.ncei.noaa.gov/products/etopo-global-relief-model).
+
+Now you are all set to use the package. 
 
 ### Read in a region
 
 While it is possible to read in the entire dataset for each source, generally the practice is to read in a portion defined by a bounding box specified in `[west, east, south, north]` order.
 
-```{r read}
+```{r etopo}
 bb <- c( -72,  -63,   39,   46)
-
-etopo <- read_etopo(bb = bb)
-gebco <- read_gebco(bb = bb)
-
+(etopo_files = list_etopo())
+etopo <- read_etopo("ETOPO_2022_v1_60s_N90W180_surface.nc", bb = bb)
 etopo
+```
+
+```{r}
+(gebco_files = list_gebco())
+gebco <- read_gebco("GEBCO_2022.nc", bb = bb)
+
 gebco
 ```
+
 Note that the GEBCO data provides approximately 4x the resolution of the ETOPO1 data.
 
 For display purposes, it is helpful to clip each raster into a small range of values.
 
-```{r plot}
-par(mfrow = c(1,2))
+```{r}
 plot(etopo, 
-     col = viridisLite::viridis(50), 
-     main = "ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE)
-plot(gebco, 
-     col = viridisLite::viridis(50), 
-     main = "GEBCO", 
-     range = c(-400, 800), 
-     legend = FALSE)
-par(mfrow = c(1,1))
+     main = "ETOPO1",
+     axes = TRUE)
 ```
+
+```{r}
+plot(gebco, 
+     main = "GEBCO", 
+     axes = TRUE)
+```
+
+
 ### Masking
 
-The `mask_topo` function will work with either data set (well, any `terra::SpatRaster` or `raster::RasterLayer` object.)  Use that function in conjuction with `terra::mask` to produce a masked raster.
+The `mask_topo` function will work with either data set (well, any `terra::SpatRaster` or `stars::stars` object.) It has optional arguments, but at its simplest...
 
 ```{r mask}
-par(mfrow = c(1,3))
-masked_land <- terra::mask(etopo, topotools::mask_topo(etopo, where = "above"))
-masked_sea <- terra::mask(etopo, topotools::mask_topo(etopo, where = "below"))
-plot(etopo, 
-     col = viridisLite::viridis(50), 
-     main = "ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE,
-     axes = FALSE,
-     mar = NA)
-plot(masked_land, 
-     col = viridisLite::viridis(50), 
-     main = "Masked Land ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE,
-     axes = FALSE,
-     mar = NA)
-plot(masked_sea, 
-     col = viridisLite::viridis(50), 
-     main = "Masked Ocean ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE,
-     axes = FALSE,
-     mar = NA)
-par(mfrow = c(1,1))
+masked_etopo = mask_topo(etopo)
+plot(masked_etopo, axes = TRUE)
 ```

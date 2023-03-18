@@ -5,9 +5,8 @@
 \title{Read a raster file - possibly subsetting}
 \usage{
 read_etopo(
-  filename = c("ETOPO_2022_v1_60s_N90W180_surface.tif",
-    "ETOPO_2022_v1_30s_N90W180_surface.tif")[1],
-  bb = NULL,
+  filename = list_etopo()[1],
+  bb = c(-72, -63, 39, 46),
   path = etopo_path(),
   form = c("SpatRaster", "stars")[2]
 )

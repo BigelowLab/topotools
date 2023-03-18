@@ -4,15 +4,17 @@
 \alias{list_etopo}
 \title{List available files for ETOPO}
 \usage{
-list_etopo(path = etopo_path(), pattern = "^ETOPO_.*\\\\.tif$")
+list_etopo(path = etopo_path(), pattern = "^ETOPO_.*\\\\.nc$", ...)
 }
 \arguments{
 \item{path}{char, the path to the data}
 
 \item{pattern}{char, regular expression of pattern for search}
+
+\item{...}{other arguments for \code{\link[base]{list.files}}}
 }
 \value{
-char fully qualified file paths
+char possibly fully qualified file paths
 }
 \description{
 List available files for ETOPO

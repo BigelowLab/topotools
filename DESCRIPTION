@@ -9,6 +9,7 @@ Imports:
   terra,
   stars,
   sf,
+  dplyr,
   ncdf4
 Maintainer: Ben Tupper <btupper@bigelow.org>
 Author: Ben Tupper <btupper@bigelow.org>

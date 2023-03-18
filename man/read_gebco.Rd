@@ -5,9 +5,10 @@
 \title{Read a raster file - possibly subsetting}
 \usage{
 read_gebco(
-  filename = "GEBCO_2022.nc",
+  filename = list_gebco()[1],
   bb = c(-72, -63, 39, 46),
-  path = gebco_path()
+  path = gebco_path(),
+  form = c("SpatRaster", "stars")[2]
 )
 }
 \arguments{

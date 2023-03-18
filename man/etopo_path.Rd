@@ -4,7 +4,7 @@
 \alias{etopo_path}
 \title{Retrieve the etopo path}
 \usage{
-etopo_path(..., root = topo_path("ETOPO1"))
+etopo_path(..., root = topo_path("etopo"))
 }
 \arguments{
 \item{...}{file path segments to append to the root}

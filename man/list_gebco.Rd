@@ -4,15 +4,17 @@
 \alias{list_gebco}
 \title{List available files for GEBCO}
 \usage{
-list_gebco(path = gebco_path(), pattern = "^GEBCO_.*\\\\.nc$")
+list_gebco(path = gebco_path(), pattern = "^GEBCO_.*\\\\.nc$", ...)
 }
 \arguments{
 \item{path}{char, the path to the data}
 
 \item{pattern}{char, regular expression of pattern for search}
+
+\item{...}{other arguments for \code{\link[base]{list.files}}}
 }
 \value{
-char fully qualified file paths
+char possibly fully qualified file paths
 }
 \description{
 List available files for GEBCO

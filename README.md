@@ -2,22 +2,27 @@ topotools
 ================
 
 Coding tools for working with local copies of [ETOPO
-data](https://ngdc.noaa.gov/mgg/global/) and [GEBCO
-data](https://www.gebco.net).
+data](https://www.ncei.noaa.gov/products/etopo-global-relief-model) and
+[GEBCO
+data](https://www.gebco.net/data_and_products/gridded_bathymetry_data/#global).
 
 ### ETOPO Citation
 
-    Amante, C. and B.W. Eakins, 2009. ETOPO1 1 Arc-Minute Global Relief Model:
-    Procedures, Data Sources and Analysis. NOAA Technical Memorandum NESDIS NGDC-24.
-    National Geophysical Data Center, NOAA. doi:10.7289/V5C8276M [2018-11-01].
+    NOAA National Centers for Environmental Information. 2022: ETOPO 2022 15 Arc-Second Global Relief Model. NOAA National Centers for Environmental Information. DOI: 10.25921/fd45-gt74. Accessed 2023-03-17.
 
 ### GEBCO Citation
 
-    GEBCO Compilation Group (2020) GEBCO 2020 Grid (doi:10.5285/c6612cbe-50b3-0cff-e053-6c86abc09f8f).
+    GEBCO Compilation Group (2022) GEBCO_2022 Grid (doi:10.5285/e0f0bb80-ab44-2739-e053-6c86abc0289c) Accessed 2023-03-17.
 
 ## Requirements
 
 -   [terra](https://CRAN.R-project.org/package=terra)
+
+-   [stars](https://CRAN.R-project.org/package=stars)
+
+-   [sf](https://CRAN.R-project.org/package=sf)
+
+-   [dplyr](https://CRAN.R-project.org/package=dplyr)
 
 -   [ncdf4](https://CRAN.R-project.org/package=ncdf4)
 
@@ -28,23 +33,40 @@ data](https://www.gebco.net).
 ## Usage
 
 ``` r
-library(terra)
 library(topotools)
-library(viridisLite)
+library(stars)
 ```
 
 ### Paths
 
-The root path to the topography data defaults to that which works for
-our setup. You can easily override this - see the `read_gebco` and
-`read_etopo` functions.
+ETOPO and GEBCO datasets are very large. We suggest that you download
+them to a directory for bathymetry/topography datasets. Then store the
+path description to this directory in a hidden text file called
+`~/.topodata` in your home directory. We can help with that. Let’s say
+your path is `/mnt/s1/projects/ecocast/coredata/bathy`. Then just call
+the `set_root_path()` function from the `topotools` package like this.
 
-``` r
-library("topotools")
-dir(topo_path(), full.names = TRUE)
-```
+    set_root_path(path = "/mnt/s1/projects/ecocast/coredata/bathy", filename = "~/.topodata")
 
-    ## [1] "/mnt/ecocast/coredata/bathy/ETOPO1" "/mnt/ecocast/coredata/bathy/gebco"
+You don’t need to do this each time you use the package; just once
+before your first use, and, of course, again if you move your data.
+
+### The Data
+
+Within this data directory create two subdirectories: `gebco` and
+`etopo`.
+
+Into the `gebco` directory store the “GEBCO_YYYY Grid (ice surface
+elevation)” NetCDF file, where `YYYY` is obviously a 4 digit year. It
+may download as a zipped file, but be sure to unzip it. You can find the
+[GEBCO data
+here](https://www.gebco.net/data_and_products/gridded_bathymetry_data/#global).
+
+Into the `etopo` directory store either the 30 arc-second or 60
+arc-second (or both!) NetCDF file. You can find [ETOPO data
+here](https://www.ncei.noaa.gov/products/etopo-global-relief-model).
+
+Now you are all set to use the package.
 
 ### Read in a region
 
@@ -54,36 +76,46 @@ specified in `[west, east, south, north]` order.
 
 ``` r
 bb <- c( -72,  -63,   39,   46)
+(etopo_files = list_etopo())
+```
 
-etopo <- read_etopo(bb = bb)
-gebco <- read_gebco(bb = bb)
+    ## [1] "ETOPO_2022_v1_30s_N90W180_surface.nc"
+    ## [2] "ETOPO_2022_v1_60s_N90W180_surface.nc"
 
+``` r
+etopo <- read_etopo("ETOPO_2022_v1_60s_N90W180_surface.nc", bb = bb)
 etopo
 ```
 
-    ## class       : SpatRaster 
-    ## dimensions  : 422, 543, 1  (nrow, ncol, nlyr)
-    ## resolution  : 0.01666667, 0.01666667  (x, y)
-    ## extent      : -72.025, -62.975, 38.975, 46.00833  (xmin, xmax, ymin, ymax)
-    ## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
-    ## source      : memory 
-    ## name        :     z 
-    ## min value   : -5128 
-    ## max value   :  1667
+    ## stars object with 2 dimensions and 1 attribute
+    ## attribute(s):
+    ##         Min.   1st Qu.   Median      Mean  3rd Qu.     Max.
+    ## z  -5021.792 -1730.825 -95.4375 -908.8038 38.10166 1653.262
+    ## dimension(s):
+    ##   from  to   offset     delta refsys x/y
+    ## x    1 542 -72.0167 0.0166667 WGS 84 [x]
+    ## y    1 422  46.0167 0.0166667 WGS 84 [y]
 
 ``` r
+(gebco_files = list_gebco())
+```
+
+    ## [1] "GEBCO_2022.nc"
+
+``` r
+gebco <- read_gebco("GEBCO_2022.nc", bb = bb)
+
 gebco
 ```
 
-    ## class       : SpatRaster 
-    ## dimensions  : 1682, 2162, 1  (nrow, ncol, nlyr)
-    ## resolution  : 0.004166667, 0.004166667  (x, y)
-    ## extent      : -72.00417, -62.99583, 38.99583, 46.00417  (xmin, xmax, ymin, ymax)
-    ## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
-    ## source      : memory 
-    ## name        : elevation 
-    ## min value   :     -5040 
-    ## max value   :      1861
+    ## stars object with 2 dimensions and 1 attribute
+    ## attribute(s), summary of first 1e+05 cells:
+    ##     Min. 1st Qu. Median      Mean 3rd Qu.  Max.
+    ## z  -5036   -4775  -3697 -3802.374   -2819 -1723
+    ## dimension(s):
+    ##   from   to   offset      delta refsys x/y
+    ## x    1 2162 -72.0042 0.00416667 WGS 84 [x]
+    ## y    1 1682  46.0042 0.00416667 WGS 84 [y]
 
 Note that the GEBCO data provides approximately 4x the resolution of the
 ETOPO1 data.
@@ -92,60 +124,32 @@ For display purposes, it is helpful to clip each raster into a small
 range of values.
 
 ``` r
-par(mfrow = c(1,2))
 plot(etopo, 
-     col = viridisLite::viridis(50), 
-     main = "ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE)
-plot(gebco, 
-     col = viridisLite::viridis(50), 
-     main = "GEBCO", 
-     range = c(-400, 800), 
-     legend = FALSE)
+     main = "ETOPO1",
+     axes = TRUE)
 ```
 
-![](README_files/figure-gfm/plot-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
-par(mfrow = c(1,1))
+plot(gebco, 
+     main = "GEBCO", 
+     axes = TRUE)
 ```
+
+    ## downsample set to 2
+
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ### Masking
 
 The `mask_topo` function will work with either data set (well, any
-`terra::SpatRaster` or `raster::RasterLayer` object.) Use that function
-in conjuction with `terra::mask` to produce a masked raster.
+`terra::SpatRaster` or `stars::stars` object.) It has optional
+arguments, but at its simplest…
 
 ``` r
-par(mfrow = c(1,3))
-masked_land <- terra::mask(etopo, topotools::mask_topo(etopo, where = "above"))
-masked_sea <- terra::mask(etopo, topotools::mask_topo(etopo, where = "below"))
-plot(etopo, 
-     col = viridisLite::viridis(50), 
-     main = "ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE,
-     axes = FALSE,
-     mar = NA)
-plot(masked_land, 
-     col = viridisLite::viridis(50), 
-     main = "Masked Land ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE,
-     axes = FALSE,
-     mar = NA)
-plot(masked_sea, 
-     col = viridisLite::viridis(50), 
-     main = "Masked Ocean ETOPO1", 
-     range = c(-400, 800), 
-     legend = FALSE,
-     axes = FALSE,
-     mar = NA)
+masked_etopo = mask_topo(etopo)
+plot(masked_etopo, axes = TRUE)
 ```
 
 ![](README_files/figure-gfm/mask-1.png)<!-- -->
-
-``` r
-par(mfrow = c(1,1))
-```

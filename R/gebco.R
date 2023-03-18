@@ -76,10 +76,12 @@ gebco_nc_nav <- function(x,
 #' @export
 #' @param path char, the path to the data
 #' @param pattern char, regular expression of pattern for search
-#' @return char fully qualified file paths
+#' @param ... other arguments for \code{\link[base]{list.files}}
+#' @return char possibly fully qualified file paths
 list_gebco <- function(path = gebco_path(), 
-                       pattern = "^GEBCO_.*\\.nc$"){
-  list.files(path, pattern = pattern, full.names = TRUE)
+                       pattern = "^GEBCO_.*\\.nc$",
+                       ...){
+  list.files(path, pattern = pattern, ...)
 }
 
 #' Read a raster file - possibly subsetting
@@ -90,9 +92,10 @@ list_gebco <- function(path = gebco_path(),
 #' @param path character, the path to the etopo datasets
 #' @param form char, one of 'SpatRaster' or 'stars' (default)
 #' @return SpatRaster or stars object
-read_gebco <- function(filename = "GEBCO_2022.nc",
+read_gebco <- function(filename = list_gebco()[1],
                        bb = c( -72,  -63,   39,   46),
-                       path = gebco_path()){
+                       path = gebco_path(),
+                       form = c("SpatRaster", "stars")[2]){
 
   filename <- file.path(path, filename[1])
   if (!file.exists(filename)) stop("file not found:", filename)
@@ -137,6 +140,7 @@ read_gebco <- function(filename = "GEBCO_2022.nc",
     )
     
   }
+  names(R) <- "z"
   return(R)
 }
 
