@@ -6,17 +6,6 @@
 NULL
 
 
-#' Retrieve the topo path
-#'
-#' @export
-#' @param ... file path segments to append to the root
-#' @param root character, the root directory
-#' @return file path specification (which may not exists)
-topo_path <- function(..., root = "/mnt/ecocast/coredata/bathy"){
-  file.path(root[1], ...)
-}
-
-
 #' Mask a raster of topo data
 #'
 #' @export

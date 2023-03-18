@@ -5,7 +5,7 @@
 \title{Read a raster file - possibly subsetting}
 \usage{
 read_gebco(
-  filename = "GEBCO_2021.nc",
+  filename = "GEBCO_2022.nc",
   bb = c(-72, -63, 39, 46),
   path = gebco_path()
 )
@@ -16,9 +16,11 @@ read_gebco(
 \item{bb}{numeric (or NULL), 4 element subsetting bounding box [west, east, south, north]}
 
 \item{path}{character, the path to the etopo datasets}
+
+\item{form}{char, one of 'SpatRaster' or 'stars' (default)}
 }
 \value{
-RasterLayer or SpatRaster or NULL
+SpatRaster or stars object
 }
 \description{
 Read a raster file - possibly subsetting

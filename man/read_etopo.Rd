@@ -5,9 +5,11 @@
 \title{Read a raster file - possibly subsetting}
 \usage{
 read_etopo(
-  filename = "ETOPO1_Ice_g_gmt4.grd",
-  bb = c(-72, -63, 39, 46),
-  path = etopo_path()
+  filename = c("ETOPO_2022_v1_60s_N90W180_surface.tif",
+    "ETOPO_2022_v1_30s_N90W180_surface.tif")[1],
+  bb = NULL,
+  path = etopo_path(),
+  form = c("SpatRaster", "stars")[2]
 )
 }
 \arguments{
@@ -16,9 +18,11 @@ read_etopo(
 \item{bb}{numeric (or NULL), 4 element subsetting bounding box [west, east, south, north]}
 
 \item{path}{character, the path to the etopo datasets}
+
+\item{form}{char, one of 'SpatRaster' or 'stars' (default)}
 }
 \value{
-SpatRaster
+SpatRaster or stars object
 }
 \description{
 Read a raster file - possibly subsetting
