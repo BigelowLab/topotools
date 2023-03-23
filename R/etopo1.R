@@ -138,9 +138,12 @@ read_etopo <- function(
                    crs = sf::st_crs(4326)),
        nx = nav$count[1],
        ny = nav$count[2],
-       dx = nav$res[1],
-       dy = nav$res[2],
-       values = as.vector(M) )
+       #dx = nav$res[1],
+       #dy = nav$res[2],
+       xlim = nav$ext[1:2],
+       ylim = nav$ext[3:4],
+       values = as.vector(M)) |>
+       stars::st_flip("y")
    }
   names(R) <- "z"
   return(R)

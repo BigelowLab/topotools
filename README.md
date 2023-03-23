@@ -92,9 +92,9 @@ etopo
     ##         Min.   1st Qu.   Median      Mean  3rd Qu.     Max.
     ## z  -5021.792 -1730.825 -95.4375 -908.8038 38.10166 1653.262
     ## dimension(s):
-    ##   from  to   offset     delta refsys x/y
-    ## x    1 542 -72.0167 0.0166667 WGS 84 [x]
-    ## y    1 422  46.0167 0.0166667 WGS 84 [y]
+    ##   from  to   offset      delta refsys x/y
+    ## x    1 542 -72.0167  0.0166667 WGS 84 [x]
+    ## y    1 422  46.0167 -0.0166667 WGS 84 [y]
 
 ``` r
 (gebco_files = list_gebco())
@@ -110,12 +110,12 @@ gebco
 
     ## stars object with 2 dimensions and 1 attribute
     ## attribute(s), summary of first 1e+05 cells:
-    ##     Min. 1st Qu. Median      Mean 3rd Qu.  Max.
-    ## z  -5036   -4775  -3697 -3802.374   -2819 -1723
+    ##    Min. 1st Qu. Median     Mean 3rd Qu. Max.
+    ## z   -78      47    154 195.0478     326 1502
     ## dimension(s):
-    ##   from   to   offset      delta refsys x/y
-    ## x    1 2162 -72.0042 0.00416667 WGS 84 [x]
-    ## y    1 1682  46.0042 0.00416667 WGS 84 [y]
+    ##   from   to   offset       delta                     refsys x/y
+    ## x    1 2162 -72.0042  0.00416667 +proj=longlat +datum=WGS84 [x]
+    ## y    1 1682  46.0042 -0.00416667 +proj=longlat +datum=WGS84 [y]
 
 Note that the GEBCO data provides approximately 4x the resolution of the
 ETOPO1 data.

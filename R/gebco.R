@@ -129,17 +129,19 @@ read_gebco <- function(filename = list_gebco()[1],
   } else {
     
     R <- stars::st_as_stars(
-      sf::st_bbox(c(xmin = nav$ext[1],
-                    ymin = nav$ext[3],
-                    xmax = nav$ext[2],
-                    ymax = nav$ext[4]),
-                  crs = sf::st_crs(4326)),
-      nx = nav$count[1],
-      ny = nav$count[2],
-      dx = nav$res[1],
-      dy = nav$res[2],
-      values = as.vector(M)
-    )
+        sf::st_bbox(c(xmin = nav$ext[1],
+                      xmax = nav$ext[2],
+                      ymin = nav$ext[3],
+                      ymax = nav$ext[4]),
+                    crs = sf::st_crs(nav$crs)),
+        nx = nav$count[1],
+        ny = nav$count[2],
+        #dx = nav$res[1],
+        #dy = nav$res[2],
+        xlim = nav$ext[1:2],
+        ylim = nav$ext[3:4],
+        values = as.vector(M)) |>
+      stars::st_flip("y")
     
   }
   names(R) <- "z"
