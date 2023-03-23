@@ -3,7 +3,18 @@
 \docType{package}
 \name{topotools}
 \alias{topotools}
+\alias{_PACKAGE}
 \alias{etopo}
 \alias{etopo1}
 \alias{gebco}
 \title{topotools - R tools for use topography/bathymetry datasets.}
+\description{
+Convenience tools for ETOPO/GEBCO data stored locally.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/BigelowLab/topotools}
+}
+
+}

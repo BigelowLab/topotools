@@ -14,7 +14,9 @@ read_etopo(
 \arguments{
 \item{filename}{character, the name of the file to read}
 
-\item{bb}{numeric (or NULL), 4 element subsetting bounding box [west, east, south, north]}
+\item{bb}{numeric (or NULL), 4 element subsetting bounding box [west, east, south, north]
+or any spatial object inheriting from SpatVector, SpatRaster, sf or stars
+from which a bounding box can be extracted}
 
 \item{path}{character, the path to the etopo datasets}
 

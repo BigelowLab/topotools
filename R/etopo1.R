@@ -88,6 +88,8 @@ list_etopo <- function(path = etopo_path(),
 #' @export
 #' @param filename character, the name of the file to read
 #' @param bb numeric (or NULL), 4 element subsetting bounding box [west, east, south, north]
+#'   or any spatial object inheriting from SpatVector, SpatRaster, sf or stars
+#'   from which a bounding box can be extracted
 #' @param path character, the path to the etopo datasets
 #' @param form char, one of 'SpatRaster' or 'stars' (default)
 #' @return SpatRaster or stars object
@@ -100,23 +102,6 @@ read_etopo <- function(
   
   filename <- file.path(path, filename[1])
   if (!file.exists(filename)) stop("file not found:", filename)
-
-  #R <- if(tolower(form[1]) == "stars"){
-  #  R <- stars::read_stars(filename)
-  #  if (!is.null(bb)){
-  #    bb <- sf::st_bbox(c(xmin = bb[1], ymin = bb[3], xmax = bb[2], ymax = bb[4]),
-  #                      crs = sf::st_crs(R))
-  #    R <- sf::st_crop(R, bb)
-  #  }
-  #} else {
-  #  R <- terra::rast(filename)
-  #  if (!is.null(bb)){
-  #    bb <- terra::ext(bb)
-  #    R = terra::crop(R, bb) 
-  #  }
-  #}
-  #
-  #return(R)
   
    on.exit(ncdf4::nc_close(X))
    
@@ -126,7 +111,7 @@ read_etopo <- function(
      return(NULL)
    }
    
-   nav <- etopo_nc_nav(X, bb = bb)
+   nav <- etopo_nc_nav(X, bb = as_bb(bb))
    
    M <- ncdf4::ncvar_get(X,
                          varid = nav$varname,
