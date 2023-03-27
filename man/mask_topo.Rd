@@ -4,7 +4,13 @@
 \alias{mask_topo}
 \title{Mask a raster of topo data}
 \usage{
-mask_topo(x = read_etopo(), value = 0, where = c("above", "at", "below")[1])
+mask_topo(
+  x = read_etopo(),
+  value = 0,
+  where = c("above", "at", "below")[1],
+  varname = "z",
+  reassign = FALSE
+)
 }
 \arguments{
 \item{x}{SpatRaster or stars, as per \code{read_etopo} or \code{read_gebco}}
@@ -17,6 +23,11 @@ mask_topo(x = read_etopo(), value = 0, where = c("above", "at", "below")[1])
 \item{at, values at \code{value} are assigned NA, above +1 and below -1}
 \item{below, values at or below \code{value} are assigned NA, all others assigned 1 - this masks area at or below sealevel}
 }}
+
+\item{varname}{char, by default 'z', but you might have a different name?}
+
+\item{reassign}{logical, if \code{TRUE} unmasked values are assigned the value 1, but
+if \code{FALSE} then they are left unchanged.}
 }
 \value{
 SpatRaster or stars
