@@ -17,4 +17,4 @@ Author: Ben Tupper <btupper@bigelow.org>
 URL: https://github.com/BigelowLab/topotools
 License: MIT + file LICENSE
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

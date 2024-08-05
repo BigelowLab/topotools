@@ -2,8 +2,8 @@
 % Please edit documentation in R/topotools-package.R
 \docType{package}
 \name{topotools}
+\alias{topotools-package}
 \alias{topotools}
-\alias{_PACKAGE}
 \alias{etopo}
 \alias{etopo1}
 \alias{gebco}

@@ -76,12 +76,18 @@ gebco_nc_nav <- function(x,
 #' @export
 #' @param path char, the path to the data
 #' @param pattern char, regular expression of pattern for search
+#' @param most_recent logical, if TRUE return just the most recent file
 #' @param ... other arguments for \code{\link[base]{list.files}}
 #' @return char possibly fully qualified file paths
 list_gebco <- function(path = gebco_path(), 
                        pattern = "^GEBCO_.*\\.nc$",
+                       most_recent = TRUE,
                        ...){
-  list.files(path, pattern = pattern, ...)
+  ff = list.files(path, pattern = pattern, ...)
+  if (most_recent){
+    ff = ff[length(ff)]
+  }
+  ff
 }
 
 #' Read a raster file - possibly subsetting

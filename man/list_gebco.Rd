@@ -4,12 +4,19 @@
 \alias{list_gebco}
 \title{List available files for GEBCO}
 \usage{
-list_gebco(path = gebco_path(), pattern = "^GEBCO_.*\\\\.nc$", ...)
+list_gebco(
+  path = gebco_path(),
+  pattern = "^GEBCO_.*\\\\.nc$",
+  most_recent = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{char, the path to the data}
 
 \item{pattern}{char, regular expression of pattern for search}
+
+\item{most_recent}{logical, if TRUE return just the most recent file}
 
 \item{...}{other arguments for \code{\link[base]{list.files}}}
 }
