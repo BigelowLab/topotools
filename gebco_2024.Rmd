@@ -15,6 +15,7 @@ Citation: GEBCO Compilation Group (2024) GEBCO 2024 Grid (doi:10.5285/1c44ce99-0
 suppressPackageStartupMessages({
   library(stars)
   library(sf)
+  library(wk)
   library(rnaturalearth)
   library(topotools)
   library(dplyr)
@@ -46,7 +47,7 @@ plot(subset, axes = TRUE)
 And here are interpolated coordinates and elevations for pixels at or above 0m.
 
 ```{r}
-x = as_tibble(subset) |>
+x = as.data.frame(subset) |>
   dplyr::filter(z >= 0) |>
   print()
 ```
