@@ -16,15 +16,15 @@ data](https://www.gebco.net/data_and_products/gridded_bathymetry_data/#global).
 
 ## Requirements
 
--   [terra](https://CRAN.R-project.org/package=terra)
+- [terra](https://CRAN.R-project.org/package=terra)
 
--   [stars](https://CRAN.R-project.org/package=stars)
+- [stars](https://CRAN.R-project.org/package=stars)
 
--   [sf](https://CRAN.R-project.org/package=sf)
+- [sf](https://CRAN.R-project.org/package=sf)
 
--   [dplyr](https://CRAN.R-project.org/package=dplyr)
+- [dplyr](https://CRAN.R-project.org/package=dplyr)
 
--   [ncdf4](https://CRAN.R-project.org/package=ncdf4)
+- [ncdf4](https://CRAN.R-project.org/package=ncdf4)
 
 ## Installation
 
@@ -92,15 +92,15 @@ etopo
     ##         Min.   1st Qu.   Median      Mean  3rd Qu.     Max.
     ## z  -5021.792 -1730.825 -95.4375 -908.8038 38.10166 1653.262
     ## dimension(s):
-    ##   from  to   offset      delta refsys x/y
-    ## x    1 542 -72.0167  0.0166667 WGS 84 [x]
-    ## y    1 422  46.0167 -0.0166667 WGS 84 [y]
+    ##   from  to offset    delta refsys x/y
+    ## x    1 542 -72.02  0.01667 WGS 84 [x]
+    ## y    1 422  46.02 -0.01667 WGS 84 [y]
 
 ``` r
 (gebco_files = list_gebco())
 ```
 
-    ## [1] "GEBCO_2022.nc"
+    ## [1] "GEBCO_2024.nc"
 
 ``` r
 gebco <- read_gebco("GEBCO_2022.nc", bb = bb)
@@ -113,9 +113,9 @@ gebco
     ##    Min. 1st Qu. Median     Mean 3rd Qu. Max.
     ## z   -78      47    154 195.0478     326 1502
     ## dimension(s):
-    ##   from   to   offset       delta                     refsys x/y
-    ## x    1 2162 -72.0042  0.00416667 +proj=longlat +datum=WGS84 [x]
-    ## y    1 1682  46.0042 -0.00416667 +proj=longlat +datum=WGS84 [y]
+    ##   from   to offset     delta                     refsys x/y
+    ## x    1 2162    -72  0.004167 +proj=longlat +datum=WGS84 [x]
+    ## y    1 1682     46 -0.004167 +proj=longlat +datum=WGS84 [y]
 
 Note that the GEBCO data provides approximately 4x the resolution of the
 ETOPO1 data.
@@ -153,3 +153,38 @@ plot(masked_etopo, axes = TRUE)
 ```
 
 ![](README_files/figure-gfm/mask-1.png)<!-- -->
+
+### Resizing
+
+We know that these are big high resolution images which can really drag
+down resources - especially for graphics. We provide a simple way to
+resize a stars object. This step always generates a warning from `GDAL`
+but it seems that we can ignore the warning without worry.
+
+``` r
+smaller = resize(masked_etopo, m = 4)
+```
+
+    ## Warning in stars::st_warp(x, cellsize = d[1:2] * m, use_gdal = TRUE,
+    ## no_data_value = NA_real_, : no_data_value not set: missing values will appear
+    ## as zero values
+
+``` r
+dim(masked_etopo)
+```
+
+    ##   x   y 
+    ## 542 422
+
+``` r
+dim(smaller)
+```
+
+    ##   x   y 
+    ## 135 106
+
+``` r
+plot(smaller, axes = TRUE)
+```
+
+![](README_files/figure-gfm/resize-1.png)<!-- -->

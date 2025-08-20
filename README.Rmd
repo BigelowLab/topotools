@@ -104,3 +104,14 @@ The `mask_topo` function will work with either data set (well, any `terra::SpatR
 masked_etopo = mask_topo(etopo)
 plot(masked_etopo, axes = TRUE)
 ```
+
+### Resizing
+
+We know that these are big high resolution images which can really drag down resources - especially for graphics.  We provide a simple way to resize a stars object.  This step always generates a warning from `GDAL` but it seems that we can ignore the warning without worry.
+
+```{r resize}
+smaller = resize(masked_etopo, m = 4)
+dim(masked_etopo)
+dim(smaller)
+plot(smaller, axes = TRUE)
+```
